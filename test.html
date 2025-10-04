@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>De Onafhankelijke Kieswijzer</title>
+    <!-- Google Fonts: Inter (body) & Alegreya Sans (display) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@700;800&family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              vvdblauw: "#003366",
+              vvdoranje: "#FF6600",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Alegreya Sans", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <!-- Vanta.js Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+    <style>
+      .kieswijzer-container > div {
+        transition: opacity 0.3s ease-in-out;
+      }
+      #vanta-bg {
+        position: relative;
+        z-index: 0;
+        background-color: #003366; /* Fallback */
+      }
+      #vanta-bg > .vanta-canvas {
+        z-index: -1;
+      }
+    </style>
+  </head>
+
+  <body
+    id="vanta-bg"
+    class="text-gray-800 font-sans flex flex-col min-h-screen items-center"
+  >
+    <!-- 1. NAVBAR MET LOGO EN NIEUWE STYLING -->
+    <header class="w-full p-2 bg-slate-50 shadow-md sticky top-0 z-10">
+      <div class="max-w-4xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <img
+            src="https://www.jongedemocraten.nl/wp-content/uploads/JD-logo-2.png"
+            alt="Jonge Democraten Logo"
+            class="h-20 w-auto"
+          />
+          <span
+            id="logo-text-slogan"
+            class="font-display text-lg md:text-xl font-bold text-vvdblauw tracking-wide"
+          >
+            De Onafhankelijke Jongere partij!
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hoofdcontent -->
+    <main class="flex-grow flex items-center justify-center w-full p-4">
+      <div
+        class="kieswijzer-container w-full max-w-2xl bg-slate-50 rounded-xl shadow-2xl p-6 md:p-10 text-center"
+      >
+        <!-- Scherm 1: Startscherm -->
+        <div id="start-scherm">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">
+            Welkom bij de Kieswijzer
+          </h2>
+          <h4 class="text-xl font-semibold text-gray-700 my-4">
+            Stem voor jouw toekomst!
+          </h4>
+          <p class="text-gray-600 mb-8">
+            Ontdek binnen enkele minuten welke visie bij jou past.
+          </p>
+          <button
+            id="start-knop"
+            class="bg-vvdoranje text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-transform transform hover:scale-105"
+          >
+            Start de Kieswijzer
+          </button>
+        </div>
+
+        <!-- Scherm 2: Vragen -->
+        <div id="kieswijzer-scherm" class="hidden">
+          <div class="mb-6">
+            <p
+              id="progress-indicator"
+              class="text-sm font-semibold text-gray-500"
+            >
+              Vraag 1 van 10
+            </p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+              <div
+                id="progress-bar"
+                class="bg-vvdoranje h-2.5 rounded-full"
+                style="width: 10%"
+              ></div>
+            </div>
+          </div>
+          <h2 id="vraag-titel" class="text-2xl md:text-3xl font-bold mb-8"></h2>
+          <div id="antwoord-opties" class="space-y-4 text-left"></div>
+          <div class="flex justify-between items-center mt-10">
+            <button
+              id="vorige-knop"
+              class="bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition"
+            >
+              Vorige
+            </button>
+            <button
+              id="volgende-knop"
+              class="bg-vvdoranje text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition"
+            >
+              Volgende
+            </button>
+          </div>
+        </div>
+
+        <!-- Scherm 3: Resultaat -->
+        <!-- Scherm 3: Resultaat -->
+        <div id="resultaat-scherm" class="hidden">
+          <h2 class="text-3xl md:text-4xl font-bold mb-2">Uw Resultaat!</h2>
+          <h4 class="text-xl font-semibold text-gray-700 mb-6">
+            Stem voor jouw toekomst!
+          </h4>
+          <div class="bg-orange-100 border-2 border-vvdoranje rounded-lg p-8">
+            <h3 class="text-2xl font-bold">100% Match!</h3>
+            <!-- D66 logo toegevoegd -->
+            <img
+              src="https://www.jongedemocraten.nl/wp-content/uploads/D66_logo_2019–present.png"
+              alt="D66 Logo"
+              class="h-24 w-auto mx-auto my-4"
+            />
+            <p class="text-gray-700 mt-4">
+              Gefeliciteerd! Uw standpunten komen volledig overeen met de visie
+              van <span class="font-bold">D66</span>. De enige echte liberale
+              partij!
+            </p>
+          </div>
+          <!-- Knoppen nu in een flex container en gecentreerd -->
+          <div class="flex justify-center mt-8 space-x-4">
+            <a
+              id="d66-knop"
+              class="bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-700 transition block"
+              href="https://www.d66.nl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              D66.nl
+            </a>
+            <button
+              id="opnieuw-knop"
+              class="bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-700 transition block"
+            >
+              Doe de test opnieuw
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 2. VASTE COUNTDOWN TIMER MET ACHTERGROND -->
+    <div
+      id="fixed-timer-container"
+      class="w-full max-w-4xl mx-auto p-6 my-8 bg-slate-900/70 backdrop-blur-md rounded-xl shadow-2xl"
+    >
+      <h3 class="text-lg font-semibold mb-4 text-slate-50 text-center">
+        Nog tot de verkiezingen:
+      </h3>
+      <div class="flex justify-center items-start space-x-2 md:space-x-4">
+        <div class="text-center">
+          <div
+            id="days"
+            class="bg-gray-800 text-white p-2 md:p-4 rounded-md text-3xl md:text-5xl font-mono shadow-lg"
+          >
+            00
+          </div>
+          <div
+            class="text-xs md:text-sm uppercase tracking-wider text-slate-200 mt-2"
+          >
+            Dagen
+          </div>
+        </div>
+        <span class="text-3xl md:text-5xl text-slate-200 font-bold">:</span>
+        <div class="text-center">
+          <div
+            id="hours"
+            class="bg-gray-800 text-white p-2 md:p-4 rounded-md text-3xl md:text-5xl font-mono shadow-lg"
+          >
+            00
+          </div>
+          <div
+            class="text-xs md:text-sm uppercase tracking-wider text-slate-200 mt-2"
+          >
+            Uren
+          </div>
+        </div>
+        <span class="text-3xl md:text-5xl text-slate-200 font-bold">:</span>
+        <div class="text-center">
+          <div
+            id="minutes"
+            class="bg-gray-800 text-white p-2 md:p-4 rounded-md text-3xl md:text-5xl font-mono shadow-lg"
+          >
+            00
+          </div>
+          <div
+            class="text-xs md:text-sm uppercase tracking-wider text-slate-200 mt-2"
+          >
+            Minuten
+          </div>
+        </div>
+        <span class="text-3xl md:text-5xl text-slate-200 font-bold">:</span>
+        <div class="text-center">
+          <div
+            id="seconds"
+            class="bg-gray-800 text-white p-2 md:p-4 rounded-md text-3xl md:text-5xl font-mono shadow-lg"
+          >
+            00
+          </div>
+          <div
+            class="text-xs md:text-sm uppercase tracking-wider text-slate-200 mt-2"
+          >
+            Seconden
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. FOOTER -->
+    <footer class="w-full p-6 text-center">
+      <p class="text-slate-200 text-sm">© 2025 Alle rechten voorbehouden.</p>
+    </footer>
+
+    <script>
+      // --- DOM Elementen & KIESWIJZER LOGICA ---
+      const logoTextSlogan = document.getElementById("logo-text-slogan");
+      const vragen = [
+        {
+          titel: "Vraag 1: Hoe belangrijk is economische groei voor u?",
+          antwoorden: [
+            { tekst: "Zeer belangrijk" },
+            { tekst: "Belangrijk" },
+            { tekst: "Neutraal" },
+            { tekst: "Niet zo belangrijk" },
+          ],
+        },
+        {
+          titel: "Vraag 2: Wat is uw mening over duurzaamheid en milieu?",
+          antwoorden: [
+            { tekst: "Prioriteit nummer één, alles moet groen" },
+            { tekst: "Belangrijk, maar economie gaat voor" },
+            { tekst: "De markt lost dit vanzelf op" },
+          ],
+        },
+        {
+          titel: "Vraag 3: Zorg en welzijn moeten...",
+          antwoorden: [
+            { tekst: "...volledig in handen van de overheid zijn." },
+            { tekst: "...een mix zijn van publiek en privaat." },
+            { tekst: "...meer marktwerking krijgen." },
+          ],
+        },
+        {
+          titel: "Vraag 4: Hoe staat u tegenover Europese samenwerking?",
+          antwoorden: [
+            { tekst: "Meer en diepere samenwerking" },
+            { tekst: "Huidige niveau is prima" },
+            { tekst: "Minder macht naar Brussel" },
+          ],
+        },
+        {
+          titel: "Vraag 5: Investeren in onderwijs is...",
+          antwoorden: [
+            { tekst: "...de hoogste prioriteit." },
+            { tekst: "...belangrijk, maar niet ten koste van alles." },
+            { tekst: "...vooral een eigen verantwoordelijkheid." },
+          ],
+        },
+        {
+          titel: "Vraag 6: De huizenmarkt moet worden opgelost door...",
+          antwoorden: [
+            { tekst: "...meer sociale huurwoningen te bouwen." },
+            { tekst: "...de markt vrij te laten en regels te versimpelen." },
+          ],
+        },
+        {
+          titel: "Vraag 7: Veiligheid op straat wordt verbeterd door...",
+          antwoorden: [
+            { tekst: "...meer politie en strenger straffen." },
+            { tekst: "...meer te investeren in preventie en buurthuizen." },
+          ],
+        },
+        {
+          titel: "Vraag 8: Belastingen voor grote bedrijven moeten...",
+          antwoorden: [
+            { tekst: "...omlaag om concurrentie te bevorderen." },
+            { tekst: "...omhoog om eerlijker bij te dragen." },
+          ],
+        },
+        {
+          titel: "Vraag 9: Immigratie is...",
+          antwoorden: [
+            { tekst: "...een verrijking voor onze cultuur." },
+            { tekst: "...nodig, maar met strengere grenzen." },
+          ],
+        },
+        {
+          titel: "Vraag 10: De overheid moet over het algemeen...",
+          antwoorden: [
+            { tekst: "...kleiner en efficiënter zijn." },
+            { tekst: "...een grotere rol spelen in de samenleving." },
+          ],
+        },
+      ];
+
+      const startScherm = document.getElementById("start-scherm");
+      const kieswijzerScherm = document.getElementById("kieswijzer-scherm");
+      const resultaatScherm = document.getElementById("resultaat-scherm");
+      const startKnop = document.getElementById("start-knop");
+      const vorigeKnop = document.getElementById("vorige-knop");
+      const volgendeKnop = document.getElementById("volgende-knop");
+      const opnieuwKnop = document.getElementById("opnieuw-knop");
+      const progressIndicator = document.getElementById("progress-indicator");
+      const progressBar = document.getElementById("progress-bar");
+      const vraagTitel = document.getElementById("vraag-titel");
+      const antwoordOpties = document.getElementById("antwoord-opties");
+
+      let huidigeVraagIndex = 0;
+      const antwoordenGebruiker = new Array(vragen.length);
+
+      function startKieswijzer() {
+        startScherm.classList.add("hidden");
+        resultaatScherm.classList.add("hidden");
+        kieswijzerScherm.classList.remove("hidden");
+        huidigeVraagIndex = 0;
+        toonVraag(huidigeVraagIndex);
+      }
+
+      function toonVraag(index) {
+        const vraag = vragen[index];
+        vraagTitel.textContent = vraag.titel;
+        antwoordOpties.innerHTML = "";
+        vraag.antwoorden.forEach((antwoord, antwoordIndex) => {
+          const isChecked = antwoordenGebruiker[index] === antwoordIndex;
+          const radioInput = `
+            <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:border-vvdoranje has-[:checked]:bg-orange-100 has-[:checked]:border-vvdoranje transition-all">
+              <input type="radio" name="antwoord" value="${antwoordIndex}" class="h-5 w-5 mr-4 accent-vvdoranje" ${
+            isChecked ? "checked" : ""
+          }>
+              <span class="text-gray-700">${antwoord.tekst}</span>
+            </label>
+          `;
+          antwoordOpties.insertAdjacentHTML("beforeend", radioInput);
+        });
+        updateProgress(index);
+        updateNavigatieKnoppen(index);
+      }
+
+      function updateProgress(index) {
+        const percentage = ((index + 1) / vragen.length) * 100;
+        progressIndicator.textContent = `Vraag ${index + 1} van ${
+          vragen.length
+        }`;
+        progressBar.style.width = `${percentage}%`;
+      }
+
+      function updateNavigatieKnoppen(index) {
+        vorigeKnop.classList.toggle("hidden", index === 0);
+        volgendeKnop.textContent =
+          index === vragen.length - 1 ? "Bekijk Resultaat" : "Volgende";
+      }
+
+      function gaNaarVolgendeVraag() {
+        const geselecteerd = document.querySelector(
+          'input[name="antwoord"]:checked'
+        );
+        if (!geselecteerd) return;
+        antwoordenGebruiker[huidigeVraagIndex] = parseInt(geselecteerd.value);
+        if (huidigeVraagIndex < vragen.length - 1) {
+          huidigeVraagIndex++;
+          toonVraag(huidigeVraagIndex);
+        } else {
+          toonResultaat();
+        }
+      }
+
+      function gaNaarVorigeVraag() {
+        if (huidigeVraagIndex > 0) {
+          huidigeVraagIndex--;
+          toonVraag(huidigeVraagIndex);
+        }
+      }
+
+      function toonResultaat() {
+        kieswijzerScherm.classList.add("hidden");
+        resultaatScherm.classList.remove("hidden");
+        logoTextSlogan.textContent =
+          "De Onafhankelijke Jongeren partij van D66!";
+      }
+
+      function herstartKieswijzer() {
+        resultaatScherm.classList.add("hidden");
+        startScherm.classList.remove("hidden");
+        antwoordenGebruiker.fill(undefined);
+        logoTextSlogan.textContent = "De Onafhankelijke Jongeren partij!";
+      }
+
+      startKnop.addEventListener("click", startKieswijzer);
+      volgendeKnop.addEventListener("click", gaNaarVolgendeVraag);
+      vorigeKnop.addEventListener("click", gaNaarVorigeVraag);
+      opnieuwKnop.addEventListener("click", herstartKieswijzer);
+
+      const daysEl = document.getElementById("days");
+      const hoursEl = document.getElementById("hours");
+      const minutesEl = document.getElementById("minutes");
+      const secondsEl = document.getElementById("seconds");
+      const verkiezingsDatum = new Date("2025-10-29T00:00:00");
+
+      function updateCountdown() {
+        const afstand = verkiezingsDatum - new Date().getTime();
+        if (afstand < 0) {
+          document.getElementById("fixed-timer-container").innerHTML =
+            '<h3 class="text-xl font-bold text-white text-center">De verkiezingen zijn geweest!</h3>';
+          clearInterval(countdownInterval);
+          return;
+        }
+        const d = Math.floor(afstand / (1000 * 60 * 60 * 24));
+        const h = Math.floor(
+          (afstand % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const m = Math.floor((afstand % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((afstand % (1000 * 60)) / 1000);
+        daysEl.innerText = String(d).padStart(2, "0");
+        hoursEl.innerText = String(h).padStart(2, "0");
+        minutesEl.innerText = String(m).padStart(2, "0");
+        secondsEl.innerText = String(s).padStart(2, "0");
+      }
+      const countdownInterval = setInterval(updateCountdown, 1000);
+      updateCountdown();
+
+      if (window.innerWidth > 768) {
+        VANTA.WAVES({
+          el: "#vanta-bg",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+          color: 0x003366,
+          shininess: 25.0,
+          waveHeight: 15.0,
+          waveSpeed: 0.8,
+          zoom: 0.8,
+        });
+      }
+    </script>
+  </body>
+</html>
